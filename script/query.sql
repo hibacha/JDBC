@@ -5,7 +5,7 @@ select p.name as `Photographer`,stat.ptype as `Specialty`, stat.num as `Number o
  join person p on p.id=stat.phid order by Photographer, ptype
  
  
-select loc.country, loc.state, loc.city, p.name 
+select loc.country as "Country", loc.state as "State/Province", loc.city as "City", p.name  as "Photographer"
  from Person p join Photographer ph on p.id=ph.id 
  join location loc on loc.id=ph.livesIn 
  group by country,  state, city,p.name
