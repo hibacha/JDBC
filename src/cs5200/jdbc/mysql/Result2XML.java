@@ -53,18 +53,21 @@ public class Result2XML {
 		// TODO Auto-generated method stub
 		Connection conn = PhotoService.getConn();
 		Statement stat = conn.createStatement();
-		ResultSet rst = stat
-				.executeQuery("");
+		ArrayList<String> list=loadQuery();
+		for(int i=0;i<list.size();i++){
+			File file = new File("./script/result"+(i+1)+".xml");
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			ResultSet rst = stat
+					.executeQuery(list.get(i));
+			FileOutputStream fos = new FileOutputStream(file);
 
-		File file = new File("./script/result.xml");
-		if (!file.exists()) {
-			file.createNewFile();
+			WebRowSet wrs = new com.sun.rowset.WebRowSetImpl();
+			wrs.writeXml(rst, fos);
+
+			
 		}
-		FileOutputStream fos = new FileOutputStream(file);
-
-		WebRowSet wrs = new com.sun.rowset.WebRowSetImpl();
-		wrs.writeXml(rst, fos);
-
 		stat.close();
 		conn.close();
 	}
