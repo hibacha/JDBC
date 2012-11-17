@@ -42,7 +42,7 @@ public class PhotoService {
 				//if the table is empty return 0
 				mId = 0;
 			}
-		}
+		} 
 		return mId;
 
 	}
