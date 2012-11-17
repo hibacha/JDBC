@@ -16,7 +16,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   </xsl:template>
   <xsl:template match="column-definition">
     <xsl:for-each select="column-label">
-      <td><xsl:value-of select="."/></td>
+      <td><b><xsl:value-of select="."/></b></td>
     </xsl:for-each>
   </xsl:template>
   <xsl:template match="currentRow">
