@@ -1,5 +1,3 @@
-
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,12 +6,29 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+/**
+ * 
+ * @author zhouyf
+ * 
+ */
 public class PhotoService {
+
+	// Staff is responsible to take over the copyright of photo taken by fired
+	// photographer.
 	public static String STAFF_NAME = "Staff";
 	public static String LIVING_CITY = "Boston";
 
+	//
 	public static String URL = "jdbc:mysql://localhost:3306/photo";
 
+	/**
+	 * 
+	 * @param tableName
+	 * @param conn
+	 * @param idName
+	 * @return current max id number of specific table
+	 * @throws SQLException
+	 */
 	public static int generateID(String tableName, Connection conn,
 			String idName) throws SQLException {
 		Statement statement = conn.createStatement();
@@ -24,6 +39,7 @@ public class PhotoService {
 			try {
 				mId = Integer.parseInt(rst.getString(1));
 			} catch (NumberFormatException e) {
+				//if the table is empty return 0
 				mId = 0;
 			}
 		}
@@ -31,38 +47,41 @@ public class PhotoService {
 
 	}
 
+	/**
+	 * 
+	 * @param phername
+	 * @param isPhotographer to determine if the first parameter is to check for photographer's name
+	 * @param conn
+	 * @return
+	 * @throws SQLException
+	 */
 	public static int getPhotographerOrPersonId(String phername,
 			Boolean isPhotographer, Connection conn) throws SQLException {
 		Statement statement = conn.createStatement();
-
+		//determine which table we should look up
 		String queryTable = isPhotographer ? "Photographer ph join Person p on ph.id=p.id"
 				: "Person p";
-
 		ResultSet rst = statement
 				.executeQuery("select count(*) as phNum , p.id as myID from "
 						+ queryTable + " where p.name='" + phername + "'");
 		int count = 0;
-
+		//move cursor in result set
 		rst.next();
 		count = Integer.parseInt(rst.getString(1));
-
 		if (isPhotographer) {
-			if (count == 0) {
-				throw new SQLException(isPhotographer ? "Photographer"
-						: "Person" + " table doesn't have this [" + phername
-								+ "] !");
-			} else if (count > 1) {
+			if (count == 0) {//no photographer exist    ---fail
+				throw new SQLException(isPhotographer ? "Photographer doesn't exist, Please change to existed Photographer "
+						: "Person" + " table doesn't have this [" + phername+ "] !");
+			} else if (count > 1) { // more than 1 name in this result set 
 				throw new SQLException(
 						"There are more than 1 Photographer named[" + phername
 								+ "]");
-			} else {
-				rst = statement
-						.executeQuery("select p.id from Photographer ph join Person p on ph.id=p.id where p.name='"
-								+ phername + "'");
+			} else {//unique name is in the result set  ---fail
+				return Integer.parseInt(rst.getString(2));
 			}
 		} else {// person logic
 				// create a person
-			if (count == 0) {
+			if (count == 0) { 
 				int newId = generateID("Person", conn, "id") + 1;
 				PreparedStatement preStat = conn
 						.prepareStatement("insert into person(id,name) values(?,?)");
@@ -70,33 +89,28 @@ public class PhotoService {
 				preStat.setString(2, phername);
 				preStat.executeUpdate();
 				preStat.close();
-
 				return newId;
-
-			} else if (count == 1) {
+			} else if (count == 1) {//get the right one person
 				return Integer.parseInt(rst.getString(2));
-			} else {
+			} else {//more than person ---fail
 				throw new SQLException(
 						"There are more than 1 person have the name["
 								+ phername + "]");
 			}
-
 		}
-		rst.next();
-		return Integer.parseInt(rst.getString(1));
 	}
 
 	private static int getLocationId(String city, String state, String country,
 			Connection conn) throws SQLException {
-		String query = "select count(*) as locNum from Location where city='"
+		String query = "select count(*) as locNum, id as myID from Location where city='"
 				+ city + "' and state='" + state + "' and country='" + country
 				+ "'";
 		Statement statement = conn.createStatement();
 		ResultSet rst = statement.executeQuery(query);
 		int count = 0;
-		while (rst.next()) {
-			count = Integer.parseInt(rst.getString(1));
-		}
+		rst.next();
+		count = Integer.parseInt(rst.getString(1));
+		
 		int locId = 0;
 		if (count == 0) {
 			int newId = generateID("Location", conn, "id") + 1;
@@ -110,12 +124,7 @@ public class PhotoService {
 			preStat.close();
 			locId = newId;
 		} else {
-			rst = statement
-					.executeQuery("select id as ID from Location where city='"
-							+ city + "' and state='" + state
-							+ "' and country='" + country + "'");
-			rst.next();
-			locId = Integer.parseInt(rst.getString(1));
+			locId = Integer.parseInt(rst.getString(2));
 		}
 		return locId;
 	}
@@ -191,6 +200,7 @@ public class PhotoService {
 		} catch (SQLException e) {
 
 			e.printStackTrace();
+			System.err.print("Please check if your photo id exists");
 		} finally {
 			if (preStat != null) {
 				preStat.close();
@@ -295,7 +305,9 @@ public class PhotoService {
 
 		Statement stat = conn.createStatement();
 		ResultSet rst = stat
-				.executeQuery("select count(*) , id from Person where name='"+STAFF_NAME+"' and id not in (select id from photographer)");
+				.executeQuery("select count(*) , id from Person where name='"
+						+ STAFF_NAME
+						+ "' and id not in (select id from photographer)");
 
 		rst.first();
 		int count = Integer.parseInt(rst.getString(1));
@@ -309,27 +321,32 @@ public class PhotoService {
 
 	}
 
-	public static boolean isSatisfiedAllRequirement(Connection conn, ReturnObj retObj) throws SQLException{
+	public static boolean isSatisfiedAllRequirement(Connection conn,
+			ReturnObj retObj) throws SQLException {
 		Statement stat = conn.createStatement();
 		ResultSet rst = stat
 				.executeQuery("select count(*) as countNum, ph.id as myId,l.id as locId from Person p join Photographer ph on ph.id=p.id join Location l on l.id=ph.livesIn  "
-						+ "where p.name='"+STAFF_NAME+"' and l.city='"+LIVING_CITY+"'");
+						+ "where p.name='"
+						+ STAFF_NAME
+						+ "' and l.city='"
+						+ LIVING_CITY + "'");
 
 		// if more than one satisfying choose the first one
 		rst.first();
 		int count = Integer.parseInt(rst.getString(1));
-		
-		if(count>=1){
+
+		if (count >= 1) {
 			int personId = Integer.parseInt(rst.getString(2));
 			retObj.setPersonId(personId);
 			int locId = Integer.parseInt(rst.getString(3));
 			retObj.setLocId(locId);
 			return true;
-		}else{
+		} else {
 			return false;
 		}
-		
+
 	}
+
 	/**
 	 * 
 	 * @param conn
@@ -341,7 +358,7 @@ public class PhotoService {
 			throws SQLException {
 		ReturnObj retObj = new ReturnObj();
 
-		if (isSatisfiedAllRequirement(conn,retObj)) {
+		if (isSatisfiedAllRequirement(conn, retObj)) {
 			return retObj;
 		} else {
 			// TODO
@@ -350,7 +367,8 @@ public class PhotoService {
 			if (isZeroStaffPerson(conn) || isStaffPherNotInBos(conn)) {
 				int newPersonId = generateID("Person", conn, "id") + 1;
 				PreparedStatement preStat = conn
-						.prepareStatement("insert into person(id,name) values(?,'"+STAFF_NAME+"')");
+						.prepareStatement("insert into person(id,name) values(?,'"
+								+ STAFF_NAME + "')");
 				preStat.setInt(1, newPersonId);
 				preStat.executeUpdate();
 
@@ -382,16 +400,15 @@ public class PhotoService {
 		Connection conn = getConn();
 		int firedPerId = Integer.parseInt(args[0]);
 
-		
 		/**/
-		
+
 		String updateQuery = "update photo set takenBy=null where takenBy=?";
-		
-		Statement queryStat=conn.createStatement();
-		ResultSet rst=queryStat.executeQuery("select id from photo where takenBy="+firedPerId);
-		
-		
-		
+
+		Statement queryStat = conn.createStatement();
+		ResultSet rst = queryStat
+				.executeQuery("select id from photo where takenBy="
+						+ firedPerId);
+
 		PreparedStatement stat = conn.prepareStatement(updateQuery);
 		stat.setInt(1, firedPerId);
 		stat.executeUpdate();
@@ -400,25 +417,26 @@ public class PhotoService {
 		stat = conn.prepareStatement(deleteQuery);
 		stat.setInt(1, firedPerId);
 		stat.executeUpdate();
-
+        
+		//return an object containing person(Staff) id and location id 
 		ReturnObj obj = CheckIfStaffExist(conn);
 
-		while(rst.next()){
-			String update2Staff = "update photo set takenBy=? where id="+rst.getInt(1);
+		while (rst.next()) {
+			String update2Staff = "update photo set takenBy=? where id="
+					+ rst.getInt(1);
 			stat = conn.prepareStatement(update2Staff);
 			stat.setInt(1, obj.getPersonId());
 			stat.executeUpdate();
-			
+
 		}
-		
-		
+
 		stat.close();
 		conn.close();
 
 	}
 
 	public static void main(String[] args) throws SQLException {
-		
+
 		String method = args[0].trim();
 		String[] realArgs = new String[args.length - 1];
 		System.arraycopy(args, 1, realArgs, 0, realArgs.length);
@@ -433,6 +451,6 @@ public class PhotoService {
 		} else if (method.equals("firePhotographer")) {
 			firePhotographer(realArgs);
 		}
-		
+
 	}
 }
