@@ -26,7 +26,7 @@ public class Result2XML {
 	 * @throws IOException
 	 */
 	public static ArrayList<String> loadQuery() throws IOException{
-		File queryFile=new File("/Users/zhouyf/git/JDBC/script/query.sql");
+		File queryFile=new File("/Users/zhouyf/git/JDBC/script/queries.sql");
 		ArrayList<String> list=new ArrayList<String>(2);
 		if(!queryFile.exists()){
 			throw new IOException("not exist query file!");
@@ -39,7 +39,7 @@ public class Result2XML {
 			if(line.trim().length()==0){
 				flush2ArrayList(sb,list);
 			}else{
-				sb.append(line);
+				sb.append(" "+line);
 			}
 		}
 		flush2ArrayList(sb, list);

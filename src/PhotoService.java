@@ -443,7 +443,7 @@ public class PhotoService {
 
 		if (method.equals("newPhoto")) {
 
-			addNewPhoto(realArgs);
+			addNewPhoto(realArgs); 
 
 		} else if (method.equals("newAppearance")) {
 			addNewAppearance(realArgs);
