@@ -49,6 +49,7 @@ public class PhotoService {
 
 	/**
 	 * 
+	 * 
 	 * @param phername
 	 * @param isPhotographer to determine if the first parameter is to check for photographer's name
 	 * @param conn
