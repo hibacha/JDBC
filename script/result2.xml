@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="query1.xsl"?>
+<?xml-stylesheet type="text/xsl" href="transform2.xsl"?>
 <webRowSet>
   <properties>
     <command><null/></command>
@@ -111,12 +111,6 @@
   <data>
     <currentRow>
       <columnValue>CN</columnValue>
-      <columnValue>chaoyang</columnValue>
-      <columnValue>beijing</columnValue>
-      <columnValue>mike</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>CN</columnValue>
       <columnValue>sh</columnValue>
       <columnValue>Shanghai</columnValue>
       <columnValue>tim</columnValue>
@@ -129,20 +123,8 @@
     </currentRow>
     <currentRow>
       <columnValue>USA</columnValue>
-      <columnValue>MA</columnValue>
+      <columnValue>MADA</columnValue>
       <columnValue>Boston</columnValue>
-      <columnValue>Staff</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>USA</columnValue>
-      <columnValue>MA</columnValue>
-      <columnValue>Cambridge</columnValue>
-      <columnValue>ee</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>USA</columnValue>
-      <columnValue>MA</columnValue>
-      <columnValue>Cambridge</columnValue>
       <columnValue>Staff</columnValue>
     </currentRow>
   </data>

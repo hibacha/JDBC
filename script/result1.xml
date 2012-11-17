@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<?xml-stylesheet type="text/xsl" href="query1.xsl"?>
+<?xml-stylesheet type="text/xsl" href="transform1.xsl"?>
 <webRowSet>
   <properties>
     <command><null/></command>
@@ -91,44 +91,19 @@
   </metadata>
   <data>
     <currentRow>
-      <columnValue>ee</columnValue>
-      <columnValue>portrait</columnValue>
-      <columnValue>2</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>ee</columnValue>
-      <columnValue>TOTAL</columnValue>
-      <columnValue>2</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>mike</columnValue>
-      <columnValue>landscape</columnValue>
-      <columnValue>1</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>mike</columnValue>
-      <columnValue>No Type</columnValue>
-      <columnValue>1</columnValue>
-    </currentRow>
-    <currentRow>
-      <columnValue>mike</columnValue>
-      <columnValue>TOTAL</columnValue>
-      <columnValue>2</columnValue>
-    </currentRow>
-    <currentRow>
       <columnValue>Staff</columnValue>
       <columnValue>landscape</columnValue>
-      <columnValue>1</columnValue>
+      <columnValue>2</columnValue>
     </currentRow>
     <currentRow>
       <columnValue>Staff</columnValue>
       <columnValue>No Type</columnValue>
-      <columnValue>1</columnValue>
+      <columnValue>2</columnValue>
     </currentRow>
     <currentRow>
       <columnValue>Staff</columnValue>
       <columnValue>portrait</columnValue>
-      <columnValue>1</columnValue>
+      <columnValue>8</columnValue>
     </currentRow>
     <currentRow>
       <columnValue>Staff</columnValue>
@@ -138,7 +113,7 @@
     <currentRow>
       <columnValue>Staff</columnValue>
       <columnValue>TOTAL</columnValue>
-      <columnValue>5</columnValue>
+      <columnValue>14</columnValue>
     </currentRow>
   </data>
 </webRowSet>
